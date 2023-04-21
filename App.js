@@ -1,7 +1,46 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { useState } from "react";
+
+let timer = null;
+let ss = 0;
+let mm = 0;
+let hh = 0;
 
 export default function App() {
   const nome = "João Felipe Lemos";
+  const [numero, setNumero] = useState(0);
+  const [textoVai, setTextoVai] = useState("Começar");
+  const [ultimoTempo, setUltimoTempo] = useState(null);
+
+  function start() {
+    if (timer !== null) {
+      clearInterval(timer);
+      timer = null;
+      setTextoVai("Começar");
+    } else {
+      timer = setInterval(() => {
+        ss++;
+
+        if (ss == 60) {
+          ss = 0;
+          mm++;
+        }
+        if (mm == 60) {
+          mm = 0;
+          hh++;
+        }
+        let format =
+          (hh < 10 ? "0" + hh : hh) +
+          ":" +
+          (mm < 10 ? "0" + mm : mm) +
+          ":" +
+          (ss < 10 ? "0" + ss : ss);
+        setNumero(format);
+      }, 1000);
+    }
+  }
+
+  function reset() {}
 
   return (
     <View style={styles.container}>
@@ -10,20 +49,22 @@ export default function App() {
         style={{ width: 350, height: 425 }}
       />
 
-      <Text style={styles.timer}>00:00:00</Text>
+      <Text style={styles.timer}>{numero}</Text>
 
       <View style={styles.btnArea}>
-        <TouchableOpacity style={styles.btn}>
-          <Text style={styles.btnTexto}>Começar</Text>
+        <TouchableOpacity style={styles.btn} onPress={start}>
+          <Text style={styles.btnTexto}>{textoVai}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity style={styles.btn} onPress={reset}>
           <Text style={styles.btnTexto}>Limpar</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.areaUltima}>
-        <Text style={styles.textoCorrida}>Ultimo tempo 00:05:11</Text>
+        <Text style={styles.textoCorrida}>
+          {ultimoTempo ? "Ultimo tempo: " + ultimoTempo : ""}
+        </Text>
       </View>
     </View>
   );
